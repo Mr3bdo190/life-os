@@ -6,6 +6,7 @@ import '../models/habit.dart';
 import '../models/budget.dart';
 import '../models/subscription.dart';
 import '../models/goal.dart';
+import '../models/countdown.dart';
 
 class StorageService {
   static const _tasksKey = 'tasks';
@@ -14,6 +15,7 @@ class StorageService {
   static const _budgetKey = 'budget';
   static const _subscriptionsKey = 'subscriptions';
   static const _goalsKey = 'goals';
+  static const _countdownsKey = 'countdowns';
 
   Future<List<Task>> loadTasks() async {
     final prefs = await SharedPreferences.getInstance();
@@ -79,5 +81,27 @@ class StorageService {
   Future<void> saveGoals(List<Goal> goals) async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_goalsKey, jsonEncode(goals.map((e) => e.toJson()).toList()));
+  }
+
+  Future<List<CountdownEvent>> loadCountdowns() async {
+    final prefs = await SharedPreferences.getInstance();
+    final raw = prefs.getString(_countdownsKey);
+    if (raw == null) return [];
+    return (jsonDecode(raw) as List).map((e) => CountdownEvent.fromJson(e)).toList();
+  }
+  Future<void> saveCountdowns(List<CountdownEvent> events) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString(_countdownsKey, jsonEncode(events.map((e) => e.toJson()).toList()));
+  }
+
+  Future<String> exportAllData() async {
+    final prefs = await SharedPreferences.getInstance();
+    final Map<String, dynamic> data = {};
+    for (String key in prefs.getKeys()) {
+      if (prefs.get(key) is String && (prefs.get(key) as String).startsWith('[')) {
+        data[key] = prefs.getString(key);
+      }
+    }
+    return jsonEncode(data);
   }
 }

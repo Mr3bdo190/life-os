@@ -27,12 +27,19 @@ jobs:
       - name: Generate Android folder
         run: flutter create . --platforms android --project-name life_os
 
-      - name: Add Notification Permission to Manifest
+      - name: Fix MainActivity for Biometrics
         run: |
+          sed -i 's/FlutterActivity/FlutterFragmentActivity/g' android/app/src/main/kotlin/com/example/life_os/MainActivity.kt
           sed -i '/<application/i \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>' android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Generate Icons and Splash
+        run: |
+          flutter pub run flutter_launcher_icons
+          flutter pub run flutter_native_splash:create
 
       - name: Build APK
         run: flutter build apk --release

@@ -11,17 +11,27 @@ class LifeOsApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final baseTheme = ThemeData.dark(useMaterial3: true);
     return MaterialApp(
       title: 'حياتي',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
+      theme: baseTheme.copyWith(
         colorScheme: ColorScheme.fromSeed(
-          seedColor: const Color(0xFF6C63FF), // لون بنفسجي عصري
+          seedColor: const Color(0xFF6C63FF),
           brightness: Brightness.dark,
         ),
-        useMaterial3: true,
-        textTheme: GoogleFonts.cairoTextTheme(Theme.of(context).textTheme),
-        scaffoldBackgroundColor: const Color(0xFF0F0F13), // خلفية داكنة أنيقة
+        textTheme: GoogleFonts.cairoTextTheme(baseTheme.textTheme).apply(
+          bodyColor: Colors.white,
+          displayColor: Colors.white,
+        ),
+        scaffoldBackgroundColor: const Color(0xFF0F0F13),
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: const Color(0xFF1A1A20),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+          hintStyle: const TextStyle(color: Colors.white38),
+          labelStyle: const TextStyle(color: Colors.white70),
+        ),
       ),
       locale: const Locale('ar', 'EG'),
       home: const HomeScreen(),

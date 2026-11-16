@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import '../services/theme_service.dart';
+import '../services/notification_service.dart';
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
@@ -28,13 +30,40 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(title: const Text('الإعدادات', style: TextStyle(fontWeight: FontWeight.bold)), centerTitle: true, backgroundColor: Colors.transparent),
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
           Card(
-            color: const Color(0xFF1A1A20),
+            color: isDark ? const Color(0xFF1A1A20) : Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: SwitchListTile(
+              secondary: Icon(isDark ? Icons.dark_mode : Icons.light_mode, color: const Color(0xFF6C63FF)),
+              title: const Text('الوضع الليلي (Dark Mode)'),
+              value: isDark,
+              activeColor: const Color(0xFF6C63FF),
+              onChanged: (val) => ThemeService.toggleTheme(val),
+            ),
+          ).animate().fadeIn().slideX(),
+          const SizedBox(height: 16),
+          Card(
+            color: isDark ? const Color(0xFF1A1A20) : Colors.white,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+            child: ListTile(
+              leading: const Icon(Icons.notifications_active, color: Colors.greenAccent),
+              title: const Text('تجربة الإشعارات'),
+              subtitle: const Text('اضغط هنا عشان تجرب شكل الإشعار'),
+              onTap: () {
+                NotificationService().showInstantNotification('أهلاً بك في حياتي 👋', 'ده إشعار تجريبي عشان تشوف شكله!');
+              },
+            ),
+          ).animate().fadeIn(delay: 100.ms).slideX(),
+          const SizedBox(height: 16),
+          Card(
+            color: isDark ? const Color(0xFF1A1A20) : Colors.white,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             child: ListTile(
               leading: const Icon(Icons.delete_forever, color: Colors.redAccent),
@@ -42,17 +71,7 @@ class SettingsScreen extends StatelessWidget {
               subtitle: const Text('حذف المهام، العادات، الميزانية..'),
               onTap: () => _clearData(context),
             ),
-          ).animate().fadeIn().slideX(),
-          const SizedBox(height: 16),
-          Card(
-            color: const Color(0xFF1A1A20),
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-            child: const ListTile(
-              leading: Icon(Icons.info_outline, color: Color(0xFF6C63FF)),
-              title: Text('عن التطبيق'),
-              subtitle: Text('Life OS - الإصدار 1.0.0'),
-            ),
-          ).animate().fadeIn(delay: 100.ms).slideX(),
+          ).animate().fadeIn(delay: 200.ms).slideX(),
         ],
       ),
     );

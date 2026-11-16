@@ -27,6 +27,10 @@ jobs:
       - name: Generate Android folder
         run: flutter create . --platforms android --project-name life_os
 
+      - name: Add Notification Permission to Manifest
+        run: |
+          sed -i '/<application/i \    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>' android/app/src/main/AndroidManifest.xml
+
       - name: Get dependencies
         run: flutter pub get
 
